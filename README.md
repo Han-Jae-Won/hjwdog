@@ -1,19 +1,13 @@
-# 🎈 Blank app template
+# Stanford Dogs 품종 분류 프로젝트
 
-A simple Streamlit app template for you to modify!
-
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
-
-### How to run it on your own machine
-
-1. Install the requirements
-
-   ```
-   $ pip install -r requirements.txt
-   ```
-
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+## 실행 방법
+pip install -r requirements.txt
+1. 데이터 준비: `data/Images/` 아래에 Stanford Dogs 원본 이미지 폴더 구조로 위치
+2. 학습:
+    ```
+    python -m src.train
+    ```
+3. Streamlit 서비스 실행:
+    ```
+    python -m streamlit run streamlit_app.py
+    ```

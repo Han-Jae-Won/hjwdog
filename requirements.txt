@@ -1,1 +1,22 @@
+torch
+torchvision
 streamlit
+Pillow
+tqdm
+scikit-learn
+
+# 기존 내용에 아래 추가
+exceptiongroup
+pygments
+tomli
+matplotlib
+websocket-client
+cffi
+sniffio
+
+anyio
+httpx
+
+# for TTS
+gTTS
+playsound==1.2.2
