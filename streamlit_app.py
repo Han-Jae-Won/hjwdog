@@ -17,7 +17,7 @@ import pandas as pd
 from datetime import datetime
 import requests
 import googlemaps
-
+from deep_translator import GoogleTranslator
 # --- 페이지 기본 설정 ---
 st.set_page_config(
     page_title="강아지 만능 솔루션",
@@ -45,7 +45,7 @@ MODEL_PATH = "dog_breed_model.pth"
 CLASS_NAMES_PATH = "class_names.json"
 BREED_DATA_PATH = "dog_breeds_data.json"
 DIARY_PATH = "pet_diary.json"
-DOG_IMAGES_DIR = "C:/Users/hjw83/prj/stanford_dogs_project/data/Images"
+DOG_IMAGES_DIR = "./data/Images"
 IMG_SIZE = 224
 
 # --- OpenAI API KEY 설정 ---
@@ -177,6 +177,8 @@ if "quiz_feedback" not in st.session_state:
     st.session_state.quiz_feedback = ""
 if "diary_data" not in st.session_state:
     st.session_state.diary_data = load_diary_data()
+if 'translated_text' not in st.session_state:
+    st.session_state.translated_text = None
 
 # --- 사이드바 UI ---
 with st.sidebar:
@@ -208,10 +210,10 @@ st.title("강아지 만능 솔루션 🐾")
 
 tab_list = [
     "🔍 상세 분석", "💬 전문가 상담", "🆚 품종 비교", "🎁 맞춤 추천", 
-    "🎨 AI 이미지 생성", "❓ 퀴즈 게임", "🗺️ 주변 장소", "📔 성장/건강 일지", "🗣️ 행동/소리 분석", "🤖 미로 게임"
+    "🎨 AI 이미지 생성", "❓ 퀴즈 게임", "🗺️ 주변 장소", "📔 성장/건강 일지", "🗣️ 행동/소리 분석", "🤖 미로 게임",
+    "🌐 번역 서비스"  # 새 탭 추가
 ]
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs(tab_list)
-
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11 = st.tabs(tab_list)
 # --- 탭 1~6: 기존 기능들 ... (코드는 생략, 이전과 동일) ---
 with tab1:
     # 상세 분석 탭 ...
@@ -886,3 +888,49 @@ with tab10:
             st.error("경로를 찾을 수 없습니다. 미로를 다시 생성해 보세요.")
 
     st.info("이 시뮬레이션은 강화 학습 에이전트가 미로를 탐색하는 '결과'를 보여줍니다. 실제 학습 과정은 포함하지 않습니다.")
+
+with tab11:
+    st.header("🌐 번역 서비스")
+    st.write("한국어-영어 또는 영어-한국어 번역을 지원합니다.")
+
+    translation_direction = st.radio(
+        "번역 방향을 선택하세요:",
+        ("한국어 → 영어", "영어 → 한국어"),
+        key="translation_direction",
+        on_change=lambda: setattr(st.session_state, 'translated_text', None) # Reset on direction change
+    )
+
+    if translation_direction == "한국어 → 영어":
+        source_lang = 'ko'
+        target_lang = 'en'
+        text_label = "번역할 한국어 텍스트를 입력하세요."
+    else:
+        source_lang = 'en'
+        target_lang = 'ko'
+        text_label = "번역할 영어 텍스트를 입력하세요."
+
+    input_text = st.text_area(text_label, height=200, key="translation_input")
+
+    if st.button("번역하기", key="translate_button"):
+        if input_text:
+            with st.spinner("번역 중..."):
+                try:
+                    translated = GoogleTranslator(source=source_lang, target=target_lang).translate(input_text)
+                    st.session_state.translated_text = translated
+                except Exception as e:
+                    st.error(f"번역 중 오류가 발생했습니다: {e}")
+                    st.info("인터넷 연결을 확인하거나 잠시 후 다시 시도해주세요.")
+                    st.session_state.translated_text = None
+        else:
+            st.warning("번역할 내용을 입력해주세요.")
+            st.session_state.translated_text = None
+
+    if st.session_state.translated_text:
+        st.subheader("번역 결과:")
+        st.success(st.session_state.translated_text)
+        st.download_button(
+            label="번역 결과 다운로드",
+            data=st.session_state.translated_text.encode('utf-8'),
+            file_name="translation.txt",
+            mime="text/plain"
+        )

@@ -1,22 +1,29 @@
-torch
-torchvision
 streamlit
+
 Pillow
-tqdm
-scikit-learn
 
-# 기존 내용에 아래 추가
-exceptiongroup
-pygments
-tomli
-matplotlib
-websocket-client
-cffi
-sniffio
+torch
 
-anyio
-httpx
+torchvision
 
-# for TTS
+openai
+
+SpeechRecognition
+
 gTTS
-playsound==1.2.2
+
+opencv-python
+
+pandas
+
+requests
+
+googlemaps
+
+deep-translator
+
+matplotlib
+
+faiss-cpu
+
+numpy
